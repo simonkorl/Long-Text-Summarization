@@ -14,7 +14,7 @@ def main():
     rouge_eval = rouge.Rouge()
     dataset = voice_recorder
     loader = DataLoader(dataset)
-    save_dir = "../outputs/voice_recorder_tfidf/"
+    save_dir = "../outputs/results/"
     os.makedirs(save_dir, exist_ok=True)
 
     for basename, _, gt_sum in loader:

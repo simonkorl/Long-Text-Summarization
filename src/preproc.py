@@ -52,8 +52,8 @@ def process_voice_recorder():
         df = pd.read_excel(path)
         table = df.values
         text = '\n'.join([x[0] for x in table])
-        ext_sum = '\n'.join([x[-2] for x in table]) # extractive summary
-        abs_sum = '\n'.join([x[-1] for x in table]) # abstractive summary
+        ext_sum = '\n'.join([x[-2].replace('\n', '') for x in table]) # extractive summary
+        abs_sum = '\n'.join([x[-1].replace('\n', '') for x in table]) # abstractive summary
         gt_sum = abs_sum
         basename, _ = os.path.splitext(os.path.basename(path))
         save_data(os.path.join(save_dir, f"{basename}.json"), text, gt_sum)
