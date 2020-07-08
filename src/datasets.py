@@ -2,38 +2,8 @@ import glob
 import os
 import re
 import json
-
-
-class ChineseAbstractiveCorpus(object):
-    def __init__(self):
-        self.text_files = glob.glob("../data/chinese_abstractive_corpus/copus/*.txt")
-
-    def __getitem__(self, index):
-        text_file = self.text_files[index]
-        with open(text_file, encoding="utf-8") as f:
-            raw_sum, raw_text = f.read().split("\n")
-            gt_sum, = re.findall(r"summary\{\{(.*)\}\}", raw_sum)
-            text, = re.findall(r"text\{\{(.*)\}\}", raw_text)
-        return text, gt_sum
-
-    def __len__(self):
-        return len(self.text_files)
-
-
-class NLPCC2017(object):
-    def __init__(self):
-        data_file = "../data/nlpcc2017textsummarization/train_with_summ.txt"
-        with open(data_file, encoding="utf-8") as f:
-            self.data = f.readlines()
-
-    def __getitem__(self, index):
-        data = json.loads(self.data[index])
-        text = data["article"]
-        gt_sum = data["summarization"]
-        return text, gt_sum
-
-    def __len__(self):
-        return len(self.data)
+import pandas as pd
+import json
 
 
 class DataLoader(object):
@@ -50,3 +20,25 @@ class DataLoader(object):
         data = self.dataset[self.index]
         self.index += 1
         return data
+
+
+class TextSumDataset(object):
+    def __init__(self, root_dir):
+        self.paths = glob.glob(f"{root_dir}/*.json")
+
+    def __getitem__(self, index):
+        path = self.paths[index]
+        basename = os.path.basename(path)
+        with open(path, encoding="utf-8") as f:
+            data = json.load(f)
+            gt_sum = data["summary"]
+            text = data["text"]
+        return basename, text, gt_sum
+
+    def __len__(self):
+        return len(self.paths)
+
+
+chinese_abstractive_corpus = TextSumDataset("../inputs/chinese_abstractive_corpus/")
+nlpcc2017 = TextSumDataset("../inputs/nlpcc2017/")
+voice_recorder = TextSumDataset("../inputs/voice_recorder/")
