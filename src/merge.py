@@ -1,6 +1,9 @@
 import csv
 import json
 import os
+import glob
+import pandas as pd
+import numpy as np
 
 
 def merge_csv():
@@ -37,7 +40,7 @@ def merge_json():
 
     tags = ['gt', 'lead', 'tfidf', 'textrank']
     os.makedirs("../outputs/merge/", exist_ok=True)
-    import ipdb; ipdb.set_trace()
+
     for filename in filenames:
         summaries = {}
         for tag, result_dir in zip(tags, result_dirs):
@@ -54,5 +57,27 @@ def merge_json():
             json.dump(summaries, f, ensure_ascii=False, indent=4)
 
 
-if __name__ == "__main__":
+def merge_excel():
+    paths = glob.glob("../outputs/merge/*.json")
+    with pd.ExcelWriter('merge.xlsx', engine='xlsxwriter') as writer:
+        for idx, path in enumerate(paths):
+            with open(path, encoding="utf-8") as f:
+                data = json.load(f)
+            text = data['text'].split('\n')
+            num_sections = len(text)
+            gt = [data['gt']] + [""] * (num_sections - 1)
+            textrank = [data['textrank']] + [""] * (num_sections - 1)
+            lead = [data['lead']] + [""] * (num_sections - 1)
+            tfidf = [data['tfidf']] + [""] * (num_sections - 1)
+            arr = np.array([text, gt, lead, tfidf, textrank], dtype=object).T
+            df = pd.DataFrame(arr, columns=['Text', 'Abs. GT', 'Lead1', 'TF-IDF', 'TextRank'])
+            df.to_excel(writer, sheet_name=f'Sheet{idx}', index=False)
+
+
+def main():
     merge_json()
+    merge_excel()
+
+
+if __name__ == "__main__":
+    main()
