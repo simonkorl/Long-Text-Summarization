@@ -31,3 +31,5 @@ Voice Recorder Dataset with **Abstractive** Ground Truth (Golden)
 | Lead-1   | 0.4591    | 0.2116    | 0.3604    |
 | TF-IDF   | 0.4190    | 0.2124    | 0.3729    |
 | TextRank | 0.4478    | 0.2187    | 0.3765    |
+| BertSum  | 0.4571    | 0.2781    | 0.3872    |
+
