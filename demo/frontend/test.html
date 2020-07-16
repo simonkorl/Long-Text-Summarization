@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>test frontend</title>
+<script>
+function loadXMLDoc()
+{
+	var xmlhttp;
+	if (window.XMLHttpRequest)
+	{
+		//  IE7+, Firefox, Chrome, Opera, Safari 浏览器执行代码
+		xmlhttp=new XMLHttpRequest();
+	}
+	else
+	{
+		// IE6, IE5 浏览器执行代码
+		xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+	}
+	
+    xmlhttp.onreadystatechange=function()
+	{
+		if (xmlhttp.readyState==4 && xmlhttp.status==200)
+		{
+			document.getElementById("myDiv").innerHTML=xmlhttp.responseText;
+		}
+	}
+	xmlhttp.open("GET","ajax_info.txt",true);
+	xmlhttp.send();
+}
+</script>
+</head>
+<body>
+    <div id="left_area" style="float: left; width: 50%;">
+        <form method="POST">
+            <h1>Input Form</h1>
+            <p>
+                <textarea rows="30" cols="50" >
+输入任意长度的文本，或者上传文件
+                </textarea>
+            </p>
+            <input type="file" name="upload" accept=".txt">
+            <input type="submit" name="submit">
+        </form>
+    </div>
+    <div id="right_area" style="float:right; width: 50%;">
+        <div id="output_area">
+            <h1>Output Form</h1>
+            <textarea readonly="true" name="output">
+这里会显示输出
+            </textarea>
+        </div>
+        <div id="time_area">
+            <h2>时间区域</h2>
+            <p>time: 这里显示时间（可以动态或是静态）</p>
+        </div>
+        <div id="stat_area">
+            <h2>统计区域</h2>
+            <p>这里显示一些统计数据，比如说ROUGE的值，字数统计等等</p>
+        </div>
+        <div id="rate_area">
+            <h2>反馈区域</h2>
+            <p>可以通过按钮提交摘要是否满意，进行统计</p>
+            <form method="GET">
+                <p>
+                满意<input type="radio" name="rate" value="1"> 不满意<input type="radio" name="rate" value="0"><br>
+                </p>
+                <input type="submit">
+            </form>
+        </div>
+    </div>
+</body>
+</html>
