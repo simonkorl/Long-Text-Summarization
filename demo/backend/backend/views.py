@@ -9,12 +9,20 @@ class Response:
     STATUS_SUCCESS = 200
 
     @staticmethod
-    def invalid_request():
-        return {"msg": "Invalid Request", "status": Response.STATUS_INVALID_REQUEST}
+    def _make_response(msg, status, payload):
+        return {"msg": msg, "status": status, "payload": payload}
 
-    @staticmethod
-    def server_error():
-        return {"msg": "Server Error", "status": Response.STATUS_SERVER_ERROR}
+    @classmethod
+    def invalid_request(cls):
+        return cls._make_response(msg="Invalid Request", status=cls.STATUS_INVALID_REQUEST, payload={})
+
+    @classmethod
+    def server_error(cls):
+        return cls._make_response(msg="Server Error", status=cls.STATUS_SERVER_ERROR, payload={})
+
+    @classmethod
+    def success(cls, payload):
+        return cls._make_response(msg="Success", status=cls.STATUS_SUCCESS, payload=payload)
 
 
 def text_summ(request):
@@ -25,13 +33,11 @@ def text_summ(request):
             res_textrank = textsumm.textrank(text)
             res_tfidf = textsumm.tfidf(text)
             res_lead1 = textsumm.lead1(text)
-            response = {
-                "msg": "success",
-                "status": Response.STATUS_SUCCESS,
+            response = Response.success({
                 "textrank": res_textrank,
                 "tfidf": res_tfidf,
                 "lead1": res_lead1,
-            }
+            })
         else:
             raise ValueError
     except (ValueError, KeyError):
