@@ -15,22 +15,28 @@
             $("#r1").click(()=>{
                 if(res != undefined){
                     $('#output_text').val(res.payload.lead1); 
+                    $("#ext_text_length").text(res.payload.lead1.length);
                 }else{
-                    $('#output_text').val("");  
+                    $('#output_text').val("");
+                    $("#ext_text_length").text(0);
                 }
             })
             $("#r2").click(()=>{
                 if(res != undefined){
                     $('#output_text').val(res.payload.tfidf); 
+                    $("#ext_text_length").text(res.payload.tfidf.length);
                 }else{
                     $('#output_text').val("");  
+                    $("#ext_text_length").text(0);
                 }
             })
             $("#r3").click(()=>{
                 if(res != undefined){
-                    $('#output_text').val(res.payload.textrank); 
+                    $('#output_text').val(res.payload.textrank);
+                    $("#ext_text_length").text(res.payload.textrank.length);
                 }else{
-                    $('#output_text').val("");  
+                    $('#output_text').val("");
+                    $("#ext_text_length").text(0);
                 }
             })
             $("#file").change(()=>{
@@ -74,6 +80,7 @@
                                     break;
                             }
                             $('#output_text').val(result);
+                            $("#ext_text_length").text(result.length);
                         } else {
                             alert(response.msg);
                             res = undefined;
@@ -113,12 +120,9 @@
                 <input id="r2" type="radio" name="ext_type" value="tfidf">TF-IDF</input>
                 <input id="r3" type="radio" name="ext_type" value="textrank" checked="true">TextRank</input>
             </p>
-            <!-- <p>TODO: 
-                抽取摘要字数
-                <p id="ext">
-
-                </p>
-            </p> -->
+            <p>抽取摘要字数:
+                <p id="ext_text_length">0</p>
+            </p>
         </div>
         <div id="time_area">
             <h2>时间区域</h2>
