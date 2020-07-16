@@ -17,12 +17,14 @@
                     var reader = new FileReader();
                     reader.onload = (file)=>{
                         $("#input_text").val(file.target.result);
-                        console.log(file.target.result.length)
+                        $("#input_text_length").text($("#input_text").val().length) 
                     }
                     reader.readAsText(load_file, 'utf-8');
                 }
             })
-
+            $("#input_text").change(()=>{
+                $("#input_text_length").text($("#input_text").val().length)
+            })
             $("#in_submit").click(()=>{
                 var text = $("#input_text").val();
                 var payload = {text : text};
@@ -56,6 +58,9 @@
             <p>
                 <textarea id="input_text" rows="30" cols="50" placeholder="输入文本或是上传文本文件"></textarea>
             </p>
+            <p>输入字数:
+                <p id="input_text_length">0</p>
+            </p>
             <input type="file" id="file" name="upload" accept=".txt">
             <button type="button" id="in_submit" name="submit">提交</button>
         </div>
@@ -63,7 +68,7 @@
     <div id="right_area" style="float:right; height:30%;width: 50%;">
         <div id="output_area">
             <h1>Output Form</h1>
-            <textarea id="output_text" readonly="true" name="output" placeholder="这里会显示输出"></textarea>
+            <textarea id="output_text" rows="10" cols="50" readonly="true" name="output" placeholder="这里会显示输出"></textarea>
         </div>
         <div id="time_area">
             <h2>时间区域</h2>
