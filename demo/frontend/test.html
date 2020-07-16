@@ -17,7 +17,7 @@
         var milliseconds = 0;
         var running_timer = undefined;
         function timer_display(){
-            $("#time_display").text((hours < 10 ? ("0" + hours) : hours) + ":" + (minutes < 10 ? ("0" + minutes) : minutes) + ":" + (seconds < 10 ? ("0" + seconds) : seconds) + ":" + (milliseconds < 10 ? ("0" + milliseconds) : milliseconds));
+            $("#time_display_ext").text((hours < 10 ? ("0" + hours) : hours) + ":" + (minutes < 10 ? ("0" + minutes) : minutes) + ":" + (seconds < 10 ? ("0" + seconds) : seconds) + ":" + (milliseconds < 10 ? ("0" + milliseconds) : milliseconds));
         }
         function timer_tick(){
             milliseconds++;
@@ -150,7 +150,7 @@
     </script>
 </head>
 <body>
-    <div id="left_area" style="float: left; height:70%; width: 50%;">
+    <div id="left_area" style="float: left; height:70%; width: 34%;">
         <div>
             <h1>文本输入</h1>
             <p>
@@ -160,13 +160,13 @@
                 <p id="input_text_length">0</p>
             </p>
             <input type="file" id="file" name="upload" accept=".txt">
-            <button type="button" id="in_submit" name="submit">提交</button>
+            <button type="button" id="in_submit" name="submit" style="width: 100px; height: 50px;;">提交</button>
         </div>
     </div>
-    <div id="right_area" style="float:right; height:30%;width: 50%;">
-        <div id="output_area">
+    <div id="middle_area" style="height:70%; width: 33%;float:left;">
+        <div id="output_area_ext">
             <h1>抽取摘要</h1>
-            <textarea id="output_text_ext" rows="10" cols="50" readonly="true" name="output" placeholder="这里会显示抽取摘要"></textarea>
+            <textarea id="output_text_ext" rows="30" cols="50" readonly="true" name="output" placeholder="这里会显示抽取摘要"></textarea>
             <p>
                 <input id="r1" type="radio" name="ext_type" value="lead1">Lead-1</input>
                 <input id="r2" type="radio" name="ext_type" value="tfidf">TF-IDF</input>
@@ -175,16 +175,24 @@
             <p>抽取摘要字数:
                 <p id="ext_text_length">0</p>
             </p>
+            <div id="time_area_ext">
+                <h2>花费时间</h2>
+                <p id="time_display_ext">00:00:00:00</p>
+            </div>
+        </div>
+    </div>
+    <div id="right_area" style="float:left; height:70%;width: 33%;">
             <h1>生成摘要</h1>
-            <textarea id="output_text_abs" rows="10" cols="50" readonly="true" name="output" placeholder="这里会显示生成摘要"></textarea>
+            <textarea id="output_text_abs" rows="30" cols="50" readonly="true" name="output" placeholder="这里会显示生成摘要"></textarea>
             <p>生成摘要字数:
                 <p id="abs_text_length">0</p>
             </p>
+            <div id="time_area_abs">
+                <h2>花费时间</h2>
+                <p id="time_display_abs">00:00:00:00</p>
+            </div> 
         </div>
-        <div id="time_area">
-            <h2>花费时间</h2>
-            <p id="time_display">00:00:00:00</p>
-        </div>
+        
         <!-- <div id="stat_area">
             <h2>统计区域</h2>
             <p>这里显示一些统计数据，比如说ROUGE的值，字数统计等等</p>
