@@ -10,7 +10,29 @@
     <title>ELTAB demo</title>
     <script>
         var url = 'http://127.0.0.1:8000/';
+        var res = undefined;
         $(function () {
+            $("#r1").click(()=>{
+                if(res != undefined){
+                    $('#output_text').val(res.payload.lead1); 
+                }else{
+                    $('#output_text').val("");  
+                }
+            })
+            $("#r2").click(()=>{
+                if(res != undefined){
+                    $('#output_text').val(res.payload.tfidf); 
+                }else{
+                    $('#output_text').val("");  
+                }
+            })
+            $("#r3").click(()=>{
+                if(res != undefined){
+                    $('#output_text').val(res.payload.textrank); 
+                }else{
+                    $('#output_text').val("");  
+                }
+            })
             $("#file").change(()=>{
                 var load_file = document.getElementById("file").files[0]
                 if(load_file){
@@ -35,15 +57,32 @@
                     success: (response) => {
                         console.log(response);
                         if (response.status === 200) {
-                            result = response.payload.textrank
+                            res = response
+                            var radio_val = $('input:radio[name=ext_type]:checked').val();
+                            switch(radio_val){
+                                case "lead1":
+                                    result = response.payload.lead1;
+                                    break;
+                                case "tfidf":
+                                    result = response.payload.tfidf;
+                                    break;
+                                case "textrank":
+                                    result = response.payload.textrank;
+                                    break;
+                                default:
+                                    result = response.payload.textrank; 
+                                    break;
+                            }
                             $('#output_text').val(result);
                         } else {
                             alert(response.msg);
+                            res = undefined;
                         }
                     },
                     error: (event) => {
                         alert('Request Failed')
                         console.log(event);
+                        res = undefined;
                     }
                 });
             })
@@ -54,7 +93,7 @@
 <body>
     <div id="left_area" style="float: left; height:70%; width: 50%;">
         <div>
-            <h1>Input Form</h1>
+            <h1>文本输入</h1>
             <p>
                 <textarea id="input_text" rows="30" cols="50" placeholder="输入文本或是上传文本文件"></textarea>
             </p>
@@ -67,14 +106,25 @@
     </div>
     <div id="right_area" style="float:right; height:30%;width: 50%;">
         <div id="output_area">
-            <h1>Output Form</h1>
+            <h1>抽取摘要</h1>
             <textarea id="output_text" rows="10" cols="50" readonly="true" name="output" placeholder="这里会显示输出"></textarea>
+            <p>
+                <input id="r1" type="radio" name="ext_type" value="lead1">Lead-1</input>
+                <input id="r2" type="radio" name="ext_type" value="tfidf">TF-IDF</input>
+                <input id="r3" type="radio" name="ext_type" value="textrank" checked="true">TextRank</input>
+            </p>
+            <!-- <p>TODO: 
+                抽取摘要字数
+                <p id="ext">
+
+                </p>
+            </p> -->
         </div>
         <div id="time_area">
             <h2>时间区域</h2>
             <p>time: 这里显示时间（可以动态或是静态）</p>
         </div>
-        <div id="stat_area">
+        <!-- <div id="stat_area">
             <h2>统计区域</h2>
             <p>这里显示一些统计数据，比如说ROUGE的值，字数统计等等</p>
         </div>
@@ -87,7 +137,7 @@
                 </p>
                 <input type="submit">
             </form>
-        </div>
+        </div> -->
     </div>
 </body>
 </html>
