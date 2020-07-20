@@ -16,56 +16,75 @@
     <meta charset="utf-8">
     <title>ELTAB demo</title>
     <script>
-        var url = 'http://127.0.0.1:8000/';
+        var url = 'http://127.0.0.1:8090/';
+        var bert_url = 'http://127.0.0.1:8090/bert/'
         var res = undefined;
-        var hours = 0;
-        var minutes = 0;
-        var seconds = 0;
-        var milliseconds = 0;
-        var running_timer = undefined;
-        function timer_display(){
-            $("#time_display_ext").text((hours < 10 ? ("0" + hours) : hours) + ":" + (minutes < 10 ? ("0" + minutes) : minutes) + ":" + (seconds < 10 ? ("0" + seconds) : seconds) + ":" + (milliseconds < 10 ? ("0" + milliseconds) : milliseconds));
+        // function timer_display(id, hours, minutes, seconds, milliseconds){
+        //     $("#" + id).text((hours < 10 ? ("0" + hours) : hours) + ":" + (minutes < 10 ? ("0" + minutes) : minutes) + ":" + (seconds < 10 ? ("0" + seconds) : seconds) + ":" + (milliseconds < 10 ? ("0" + milliseconds) : milliseconds)); 
+        // }
+        class Timer{
+            constructor(id){
+                this.id = id;
+                this.hours = 0;
+                this.minutes = 0;
+                this.seconds = 0;
+                this.milliseconds = 0;
+                this.running_timer = undefined;
+
+                // this.timer_display = function(){
+                //     timer_display(this.id, this.hours, this.minutes, this.seconds, this.milliseconds);
+                // }
+            }
+
+            timer_display(){
+                $("#" + this.id).text((this.hours < 10 ? ("0" + this.hours) : this.hours) + ":" + (this.minutes < 10 ? ("0" + this.minutes) : this.minutes) + ":" + (this.seconds < 10 ? ("0" + this.seconds) : this.seconds) + ":" + (this.milliseconds < 10 ? ("0" + this.milliseconds) : this.milliseconds));
+            }
+
+            timer_tick(){
+                this.milliseconds++;
+                if(this.milliseconds >= 100){
+                    this.seconds++;
+                    this.milliseconds -= 100;
+                }
+                if(this.seconds >= 60){
+                    this.minutes++;
+                    this.seconds -= 60;
+                }
+                if(this.minutes >= 60){
+                    this.hours++;
+                    this.minutes -= 60;
+                }
+                this.timer_display();
+            }
+            timer_reset(){
+                this.hours = 0;
+                this.minutes = 0;
+                this.seconds = 0;
+                if(this.running_timer != undefined){
+                    window.clearInterval(this.running_timer);
+                    this.running_timer = undefined;
+                }
+                this.timer_display();
+            }
+
+            timer_begin(){
+                if(this.running_timer != undefined){
+                    this.timer_reset();
+                }
+                this.running_timer = setInterval(()=>{this.timer_tick()}, 10);
+            }
+
+            timer_stop(){
+                if(this.running_timer == undefined){
+                    console.log("cannot stop timer while there is no timer running");
+                } else{
+                    window.clearInterval(this.running_timer);
+                    this.running_timer = undefined;
+                }
+            }
         }
-        function timer_tick(){
-            milliseconds++;
-            if(milliseconds >= 100){
-                seconds++;
-                milliseconds -= 100;
-            }
-            if(seconds >= 60){
-                minutes++;
-                seconds -= 60;
-            }
-            if(minutes >= 60){
-                hours++;
-                minutes -= 60;
-            }
-            timer_display();
-        }
-        function timer_reset(){
-            hours = 0;
-            minutes = 0;
-            seconds = 0;
-            if(running_timer != undefined){
-                window.clearInterval(running_timer);
-                running_timer = undefined;
-            }
-            timer_display();
-        }
-        function timer_begin(){
-            if(running_timer != undefined){
-                timer_reset();
-            }
-            running_timer = setInterval(timer_tick, 10);
-        }
-        function timer_stop(){
-            if(running_timer == undefined){
-                console.log("cannot stop timer while there is no timer running");
-            } else{
-                window.clearInterval(running_timer);
-                running_timer = undefined;
-            }
-        }
+        var ext_timer = new Timer("time_display_ext");
+        var abs_timer = new Timer("time_display_abs");
         $(function () {
             $("#r1").click(()=>{
                 if(res != undefined){
@@ -111,14 +130,16 @@
             $("#in_submit").click(()=>{
                 var text = $("#input_text").val();
                 var payload = {text : text};
-                timer_reset();
-                timer_begin();
+                ext_timer.timer_reset();
+                ext_timer.timer_begin();
+                abs_timer.timer_reset();
+                abs_timer.timer_begin();
                 $.ajax({
                     type: 'POST',
                     url: url,
                     data: payload,
                     success: (response) => {
-                        timer_stop();
+                        ext_timer.timer_stop();
                         console.log(response);
                         if (response.status === 200) {
                             res = response
@@ -148,11 +169,33 @@
                         alert('Request Failed')
                         console.log(event);
                         res = undefined;
-                        timer_reset();
+                        ext_timer.timer_reset();
                     }
                 });
-            })
-            
+                $.ajax({
+                    type: 'POST',
+                    url: bert_url,
+                    data: payload,
+                    success: (response) => {
+                        abs_timer.timer_stop();
+                        console.log(response);
+                        if (response.status === 200) {
+                            summary = response.payload.summary;
+                            summary = summary.replace(/\s/g, "");
+                            $('#output_text_abs').val(summary);
+                            $("#abs_text_length").text(summary.length);
+                        } else {
+                            alert(response.msg);
+                        }
+                    },
+                    error: (event) => {
+                        alert('Request Failed')
+                        console.log(event);
+                        // res = undefined;
+                        abs_timer.timer_reset();
+                    }
+                });
+            });
         });
     </script>
 </head>
